@@ -130,36 +130,6 @@ function App() {
     >
       <div className="min-h-screen bg-[#0f1117]">
         {/* Header */}
-        {/* <header className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-          <div className="">
-            <h1 className="flex gap-2 text-lg font-semibold text-slate-100 tracking-tight">
-              <TreePalm /> Agent Builder
-            </h1>
-            <p className="text-xs text-white">
-              Drag skills and layers onto your canvas
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/CV_Susanta_Basnet.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs p-2 border-none text-white border rounded-md bg-[#8E51FF]"
-            >
-              <FileText size={14} />
-              Resume
-            </a>
-            <SessionTimer />
-
-            <button
-              onClick={refetch}
-              disabled={loading}
-              className="text-sm cursor-pointer px-3 py-1.5 rounded-lg border border-slate-700 text-swhite hover:border-slate-500 hover:text-slate-300 transition-all disabled:opacity-50"
-            >
-              {loading ? "Loading…" : <RefreshCcw size={18} />}
-            </button>
-          </div>
-        </header> */}
 
         <header className="border-b border-slate-800 px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between gap-3">
           <div>
@@ -216,7 +186,7 @@ function App() {
             ${
               activeTab === tab
                 ? "text-violet-400 border-b-2 border-violet-500"
-                : "text-slate-500 hover:text-slate-300"
+                : "text-white hover:text-slate-300"
             }`}
                 >
                   {tab}
