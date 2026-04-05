@@ -1,34 +1,61 @@
 # AI Agent Profile Builder
 
-Welcome to the AI Agent Profile Builder! 
+A modern, drag-and-drop interface for composing custom AI agents from
+profiles, skills, and personality layers — built as a frontend take-home challenge.
 
-In this project, you will be taking over a partially built "AI Agent Builder" interface. The current state is functional in principle, but it's suffering from severe performance issues, logical bugs, and a lack of styling.
+---
 
-Your goal is to transform this raw scaffold into a polished, performant, and visually appealing web application.
+## What is this?
 
-## 🎯 Your Mission
+You pick a **base profile** (like "Code Assistant" or "Creative Writer"),
+drag on **skills** (like Web Search or Code Execution), stack some
+**personality layers** (Chain of Thought? Pirate Persona? Why not both),
+pick an **AI provider**, name your agent, and save it.
 
-1. **Fork this Repository:** Start by making a public fork of this repository to your own GitHub account.
-2. **Fix the Bugs:** We have intentionally left several React anti-patterns and performance bottlenecks in the codebase. Identify them, fix them, and explain your fixes in your PR description.
-3. **Elevate the UI/UX:** The current UI is a skeleton using basic dropdowns. We want you to wow us with a much more intuitive and user-friendly experience—**preferably implementing a drag-and-drop interface** to construct the agent instead of the current select menus. Implement a responsive, modern, and beautiful design. Feel free to use appropriate CSS frameworks (Tailwind, CSS Modules, Styled Components) and component libraries (like dnd-kit or react-beautiful-dnd) if you prefer.
-   - **⭐️ Design Process:** The strongest engineers don't just write code; they think about the user. While not strictly required, candidates who share a Figma file (or similar) detailing their thought process and design iterations before building stand out significantly from the crowd. Feel free to include a link in your PR description!
-4. **Submit a Pull Request:** Once you are satisfied with your work, open a Pull Request against this original repository.
-   - If you have created a design for this challenge. Make sure to link it here. If not, leave it as is.
+---
 
-   **DESIGN LINK** = <public_url_here>
-   - **IMPORTANT:** In the PR, make sure to put your CV in the `public` folder (as a PDF). You can also present your CV in the frontend in a creative way; but the pdf in the `public` folder is a must.
+## Features
 
-## 🤖 AI Tool Usage
-We are a very AI-positive company! The use of AI coding assistants, LLMs, or other supporting tools is highly encouraged and **will not harm your chances**. 
+- Drag and drop skills and layers onto your agent canvas (desktop)
+- Tap to add on mobile — no awkward dragging on small screens
+- Accordion panel on the left keeps things clean and uncluttered
+- Saved agents persist in localStorage — they survive page refreshes
+- Confirm modal before any destructive action (no accidental deletions)
+- Toast notifications for every action — save, load, delete, clear
+- Fully responsive — works on phones, tablets, and wide monitors
+- Session timer so you know how long you've been lost in agent-land
 
-If you used any AI tools to assist you with this project (e.g., ChatGPT, Claude, GitHub Copilot, Cursor, etc.), please create a brief section in your PR description listing them and how you utilized them.
+---
 
-## 📝 Evaluation Criteria
+## Tech Stack
 
-We will be evaluating your submission based on:
-1. **React Fundamentals:** Did you identify and correctly fix the intentional performance and scoping bugs? Is your component state managed logically?
-2. **Code Quality:** Is your code clean, readable, and well-structured? Did you extract components appropriately?
-3. **Design & UX:** Does the final application look professional and feel good to use? Is it responsive?
-4. **Communication:** Does your PR description clearly explain the architectural decisions you made, the bugs you found, and how you fixed them?
+- React + TypeScript + Vite
+- Tailwind CSS
+- dnd-kit (drag and drop)
+- Lucide React + react-hot-toast
 
-Good luck! We can't wait to see what you build.
+---
+
+## Getting Started
+
+```bash
+git clone https://github.com/basnetsushant/ai-agent-builder
+cd ai-agent-builder
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) and start building agents.
+
+---
+
+## How to use it
+
+1. **Pick a profile** — click one from the Base Profile section on the left
+2. **Add skills** — drag them onto the Skills drop zone (or tap on mobile)
+3. **Add layers** — same idea, drag or tap from the Layers section
+4. **Pick a provider** — Claude, ChatGPT, Gemini, DeepSeek, or Kimi
+5. **Name and save** — give your agent a name and hit Save
+6. **Load or delete** — your saved agents appear at the bottom of the canvas
+
+---

@@ -20,6 +20,7 @@ interface Props {
   onSave: () => void;
   onLoad: (agent: SavedAgent) => void;
   onDelete: (id: string) => void;
+  onClearAll: () => void;
   savedAgents: SavedAgent[];
 }
 
@@ -67,6 +68,7 @@ function AgentCanvas({
   onLoad,
   onDelete,
   savedAgents,
+  onClearAll,
 }: Props) {
   const profile = data.agentProfiles.find((p) => p.id === selectedProfile);
   const [confirmState, setConfirmState] = useState<{
@@ -225,7 +227,9 @@ function AgentCanvas({
                   title: "Clear all agents?",
                   message: "This action cannot be undone.",
                   onConfirm: () => {
-                    savedAgents.forEach((a) => onDelete(a.id));
+                    onClearAll();
+                    toast.success("All agents cleared");
+                    setConfirmState((prev) => ({ ...prev, open: false }));
                   },
                 })
               }

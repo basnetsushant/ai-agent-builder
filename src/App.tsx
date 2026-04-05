@@ -15,9 +15,21 @@ import SkillCard from "./components/SkillCard";
 import LayerCard from "./components/LayerCard";
 import AgentCanvas from "./components/AgentCanvas";
 import type { SavedAgent, Skill, Layer } from "./types";
-import { FileText, RefreshCcw, TreePalm } from "lucide-react";
+import { ChevronDown, FileText, RefreshCcw, TreePalm } from "lucide-react";
 import toast from "react-hot-toast";
+import { useIsMobile } from "./hooks/useIsMobile";
 
+const categoryColors: Record<string, string> = {
+  information: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  action: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+};
+
+const typeColors: Record<string, string> = {
+  reasoning: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+  personality: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+  context: "bg-teal-500/10 text-teal-400 border-teal-500/20",
+  formatting: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+};
 function App() {
   const { data, loading, error, refetch } = useAgentData();
 
@@ -29,9 +41,14 @@ function App() {
   const [savedAgents, setSavedAgents] = useState<SavedAgent[]>([]);
   const [activeItem, setActiveItem] = useState<Skill | Layer | null>(null);
   const [activeType, setActiveType] = useState<"skill" | "layer" | null>(null);
-  const [activeTab, setActiveTab] = useState<"profiles" | "skills" | "layers">(
-    "profiles",
-  );
+  const [openSection, setOpenSection] = useState<
+    "profiles" | "skills" | "layers" | null
+  >("profiles");
+  const isMobile = useIsMobile();
+  const toggleSection = (section: "profiles" | "skills" | "layers") => {
+    setOpenSection((prev) => (prev === section ? null : section));
+  };
+
   // Load saved agents from localStorage once on mount
   useEffect(() => {
     try {
@@ -121,7 +138,10 @@ function App() {
       }
     }
   };
-
+  const handleClearAll = () => {
+    persist([]);
+    toast.success("All agents cleared ");
+  };
   return (
     <DndContext
       sensors={sensors}
@@ -143,7 +163,7 @@ function App() {
 
           <div className="flex items-center gap-2 lg:gap-4">
             <a
-              href="/CV_Susanta_Basnet.pdf"
+              href="/CV_Sushant_Basnet.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-xs px-2 py-1.5 lg:px-3 lg:py-2 rounded-md bg-[#8E51FF] text-white"
@@ -176,81 +196,230 @@ function App() {
 
         {data && (
           <div className="flex flex-col lg:flex-row lg:h-[calc(100vh-75px)]">
-            {/* Mobile tab switcher — only visible on small screens */}
-            <div className="flex lg:hidden border-b border-slate-800 bg-[#0f1117] sticky top-0 z-10">
-              {(["profiles", "skills", "layers"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-2.5 text-xs font-medium uppercase tracking-widest transition-colors
-            ${
-              activeTab === tab
-                ? "text-violet-400 border-b-2 border-violet-500"
-                : "text-white hover:text-slate-300"
-            }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
             {/* Left panel */}
-            <aside className="w-full lg:w-80 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col overflow-hidden lg:h-full">
-              {/* Profiles */}
-              <div
-                className={`flex-1 overflow-y-auto p-4 border-b border-slate-800
-        ${activeTab === "profiles" ? "block" : "hidden"} lg:block`}
-              >
-                <p className="text-xs text-white uppercase tracking-widest mb-3">
-                  Base Profile
-                </p>
-                <div className="flex flex-col gap-2">
-                  {data.agentProfiles.map((profile) => (
-                    <ProfileCard
-                      key={profile.id}
-                      profile={profile}
-                      selected={selectedProfile === profile.id}
-                      onSelect={setSelectedProfile}
-                    />
-                  ))}
+            <aside className="w-full lg:w-80 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col lg:h-full overflow-hidden">
+              {/* Profiles Section */}
+              <div className="flex flex-col border-b border-slate-800">
+                <button
+                  onClick={() => toggleSection("profiles")}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-slate-800/50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-white uppercase tracking-widest font-medium">
+                      Base Profile
+                    </span>
+                    {selectedProfile && openSection !== "profiles" && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/20">
+                        {
+                          data.agentProfiles.find(
+                            (p) => p.id === selectedProfile,
+                          )?.name
+                        }
+                      </span>
+                    )}
+                  </div>
+                  <ChevronDown
+                    size={15}
+                    className={`text-slate-400 transition-transform duration-200
+              ${openSection === "profiles" ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out
+          ${openSection === "profiles" ? "max-h-150 opacity-100" : "max-h-0 opacity-0"}`}
+                >
+                  <div className="overflow-y-auto p-4 flex flex-col gap-2 max-h-125">
+                    {data.agentProfiles.map((profile) => (
+                      <ProfileCard
+                        key={profile.id}
+                        profile={profile}
+                        selected={selectedProfile === profile.id}
+                        onSelect={(id) => {
+                          setSelectedProfile(id);
+                          toggleSection("skills");
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Skills */}
-              <div
-                className={`flex-1 overflow-y-auto p-4 border-b border-slate-800
-        ${activeTab === "skills" ? "block" : "hidden"} lg:block`}
-              >
-                <p className="text-xs text-white uppercase tracking-widest mb-3">
-                  Skills — <span className="normal-case">drag to canvas</span>
-                </p>
-                <div className="flex flex-col gap-2">
-                  {data.skills.map((skill) => (
-                    <SkillCard
-                      key={skill.id}
-                      skill={skill}
-                      disabled={selectedSkills.includes(skill.id)}
-                    />
-                  ))}
+              {/* Skills Section */}
+              <div className="flex flex-col border-b border-slate-800">
+                <button
+                  onClick={() => toggleSection("skills")}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-slate-800/50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-white uppercase tracking-widest font-medium">
+                      Skills
+                    </span>
+                    {selectedSkills.length > 0 && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/20">
+                        {selectedSkills.length} added
+                      </span>
+                    )}
+                    {openSection === "skills" && (
+                      <span className="text-xs text-slate-500 normal-case">
+                        — drag to canvas
+                      </span>
+                    )}
+                  </div>
+                  <ChevronDown
+                    size={15}
+                    className={`text-slate-400 transition-transform duration-200
+              ${openSection === "skills" ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out
+          ${openSection === "skills" ? "max-h-150 opacity-100" : "max-h-0 opacity-0"}`}
+                >
+                  <div className="overflow-y-auto p-4 flex flex-col gap-2 max-h-115">
+                    {isMobile
+                      ? data.skills.map((skill) => {
+                          const isAdded = selectedSkills.includes(skill.id);
+                          return (
+                            <button
+                              key={skill.id}
+                              onClick={() => {
+                                if (!isAdded)
+                                  setSelectedSkills((prev) => [
+                                    ...prev,
+                                    skill.id,
+                                  ]);
+                              }}
+                              disabled={isAdded}
+                              className={`w-full text-left p-3 rounded-xl border transition-all duration-200
+            ${
+              isAdded
+                ? "border-violet-500/40 bg-violet-500/10 opacity-60 cursor-not-allowed"
+                : "border-slate-700 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800 cursor-pointer"
+            }`}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <p
+                                  className={`text-sm font-medium ${isAdded ? "text-violet-300" : "text-slate-200"}`}
+                                >
+                                  {skill.name}
+                                </p>
+                                <span
+                                  className={`text-xs px-2 py-0.5 rounded-full border shrink-0
+              ${
+                isAdded
+                  ? "bg-violet-500/10 text-violet-400 border-violet-500/20"
+                  : (categoryColors[skill.category] ??
+                    "bg-slate-700 text-slate-400 border-slate-600")
+              }`}
+                                >
+                                  {isAdded ? "added" : skill.category}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-500 mt-1">
+                                {skill.description}
+                              </p>
+                            </button>
+                          );
+                        })
+                      : data.skills.map((skill) => (
+                          <SkillCard
+                            key={skill.id}
+                            skill={skill}
+                            disabled={selectedSkills.includes(skill.id)}
+                          />
+                        ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Layers */}
-              <div
-                className={`flex-1 overflow-y-auto p-4
-        ${activeTab === "layers" ? "block" : "hidden"} lg:block`}
-              >
-                <p className="text-xs text-white uppercase tracking-widest mb-3">
-                  Layers — <span className="normal-case">drag to canvas</span>
-                </p>
-                <div className="flex flex-col gap-2">
-                  {data.layers.map((layer) => (
-                    <LayerCard
-                      key={layer.id}
-                      layer={layer}
-                      disabled={selectedLayers.includes(layer.id)}
-                    />
-                  ))}
+              {/* Layers Section */}
+              <div className="flex flex-col">
+                <button
+                  onClick={() => toggleSection("layers")}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-slate-800/50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-white uppercase tracking-widest font-medium">
+                      Personality Layers
+                    </span>
+                    {selectedLayers.length > 0 && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/20">
+                        {selectedLayers.length} added
+                      </span>
+                    )}
+                    {openSection === "layers" && (
+                      <span className="text-xs text-slate-500 normal-case">
+                        — drag to canvas
+                      </span>
+                    )}
+                  </div>
+                  <ChevronDown
+                    size={15}
+                    className={`text-slate-400 transition-transform duration-200
+              ${openSection === "layers" ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out
+          ${openSection === "layers" ? "max-h-150 opacity-100" : "max-h-0 opacity-0"}`}
+                >
+                  <div className="overflow-y-auto p-4 flex flex-col gap-2 max-h-115">
+                    {isMobile
+                      ? data.layers.map((layer) => {
+                          const isAdded = selectedLayers.includes(layer.id);
+                          return (
+                            <button
+                              key={layer.id}
+                              onClick={() => {
+                                if (!isAdded)
+                                  setSelectedLayers((prev) => [
+                                    ...prev,
+                                    layer.id,
+                                  ]);
+                              }}
+                              disabled={isAdded}
+                              className={`w-full text-left p-3 rounded-xl border transition-all duration-200
+            ${
+              isAdded
+                ? "border-violet-500/40 bg-violet-500/10 opacity-60 cursor-not-allowed"
+                : "border-slate-700 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-800 cursor-pointer"
+            }`}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <p
+                                  className={`text-sm font-medium ${isAdded ? "text-violet-300" : "text-slate-200"}`}
+                                >
+                                  {layer.name}
+                                </p>
+                                <span
+                                  className={`text-xs px-2 py-0.5 rounded-full border shrink-0
+              ${
+                isAdded
+                  ? "bg-violet-500/10 text-violet-400 border-violet-500/20"
+                  : (typeColors[layer.type] ??
+                    "bg-slate-700 text-slate-400 border-slate-600")
+              }`}
+                                >
+                                  {isAdded ? "added" : layer.type}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-500 mt-1">
+                                {layer.description}
+                              </p>
+                            </button>
+                          );
+                        })
+                      : data.layers.map((layer) => (
+                          <LayerCard
+                            key={layer.id}
+                            layer={layer}
+                            disabled={selectedLayers.includes(layer.id)}
+                          />
+                        ))}
+                  </div>
                 </div>
               </div>
             </aside>
@@ -264,6 +433,7 @@ function App() {
                 selectedLayers={selectedLayers}
                 provider={provider}
                 agentName={agentName}
+                onClearAll={handleClearAll}
                 onRemoveSkill={(id) =>
                   setSelectedSkills((prev) => prev.filter((s) => s !== id))
                 }
