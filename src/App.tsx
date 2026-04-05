@@ -85,7 +85,7 @@ function App() {
     setSelectedProfile("");
     setSelectedSkills([]);
     setSelectedLayers([]);
-    setSelectedProfile("");
+    setProvider("");
   };
 
   const handleLoad = (agent: SavedAgent) => {
@@ -140,6 +140,7 @@ function App() {
   };
   const handleClearAll = () => {
     persist([]);
+
     toast.success("All agents cleared ");
   };
   return (
